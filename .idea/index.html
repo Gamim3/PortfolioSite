@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emi | 3D NPR Artist</title>
+
+    <!-- External Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+    <!-- Model Viewer -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
+
+    <!-- Link to CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bg: '#FCF9EA',      // Cream
+                        accent1: '#BADFDB', // Pastel Blue
+                        accent2: '#FFA4A4', // Salmon
+                        accent3: '#FFBDBD', // Light Pink
+                        dark: '#2D2D2D',    // Soft Black
+                        ui: '#FFFFFF',
+                    },
+                    fontFamily: {
+                        header: ['Oswald', 'sans-serif'],
+                        body: ['Kosugi Maru', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'slide-in': 'slideIn 0.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        slideIn: {
+                            '0%': { transform: 'translateX(-100%) skewX(-7deg)', opacity: '0' },
+                            '100%': { transform: 'translateX(0) skewX(-7deg)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body antialiased min-h-screen relative selection:bg-accent2 selection:text-white">
+
+<!-- === TRANSITION OVERLAY (Add this block) === -->
+<div class="transition-overlay">
+    <div class="transition-bar"></div>
+    <div class="transition-bar"></div>
+    <div class="transition-bar"></div>
+</div>
+
+<!-- Intro Animation Overlay -->
+<div id="loader" class="loader-overlay">
+    <div class="text-4xl font-header font-bold text-white tracking-widest animate-pulse">
+        LOADING ART...
+    </div>
+</div>
+
+<!-- === DYNAMIC BACKGROUND SYSTEM === -->
+<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+
+    <!-- Background: HOME (Video) -->
+    <div id="bg-home" class="absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-100 bg-video-container">
+        <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-multiply">
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-video-of-a-man-with-heads-like-statues-32663-large.mp4" type="video/mp4">
+        </video>
+        <div class="absolute inset-0 bg-accent1/10 mix-blend-overlay"></div>
+    </div>
+
+    <!-- Background: PROJECTS -->
+    <div id="bg-projects" class="absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-0 bg-pattern-stripes"></div>
+
+    <!-- Background: MODELS -->
+    <div id="bg-models" class="absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-0 bg-pattern-grid"></div>
+
+    <!-- Background: ABOUT -->
+    <div id="bg-about" class="absolute inset-0 transition-opacity duration-1000 ease-in-out opacity-0 bg-pattern-blobs">
+        <div class="absolute top-0 right-0 w-[800px] h-[800px] bg-accent1/20 rounded-full blur-3xl animate-pulse-slow translate-x-1/2 -translate-y-1/4"></div>
+        <div class="absolute bottom-0 left-0 w-[600px] h-[600px] bg-accent3/20 rounded-full blur-3xl animate-float -translate-x-1/4 translate-y-1/4"></div>
+    </div>
+</div>
+
+<!-- Navigation Bar (Left Side) -->
+<nav class="fixed left-0 top-0 h-full w-24 md:w-64 z-40 hidden md:flex flex-col justify-center pl-8 pointer-events-none">
+    <div class="pointer-events-auto flex flex-col gap-6">
+        <div class="font-header text-5xl font-bold text-dark mb-4 skew-container">
+            <span class="block text-accent2">EMI</span>
+            <span class="text-3xl unskew inline-block">WORKS</span>
+        </div>
+
+        <a href="#home" onclick="navigate('home')" class="nav-item group flex items-center gap-4 cursor-pointer bg-white/80 backdrop-blur-sm p-3 skew-container border-l-4 border-accent1 shadow-lg w-48">
+            <span class="unskew font-bold text-lg tracking-widest group-hover:text-white">HOME</span>
+            <i class="fa-solid fa-cube unskew text-accent1 group-hover:text-white ml-auto"></i>
+        </a>
+
+        <a href="#projects" onclick="navigate('projects')" class="nav-item group flex items-center gap-4 cursor-pointer bg-white/80 backdrop-blur-sm p-3 skew-container border-l-4 border-accent2 shadow-lg w-48 ml-4">
+            <span class="unskew font-bold text-lg tracking-widest group-hover:text-white">GALLERY</span>
+            <i class="fa-solid fa-paintbrush unskew text-accent2 group-hover:text-white ml-auto"></i>
+        </a>
+
+        <a href="#models" onclick="navigate('models')" class="nav-item group flex items-center gap-4 cursor-pointer bg-white/80 backdrop-blur-sm p-3 skew-container border-l-4 border-accent3 shadow-lg w-48 ml-8">
+            <span class="unskew font-bold text-lg tracking-widest group-hover:text-white">3D VIEW</span>
+            <i class="fa-solid fa-vr-cardboard unskew text-accent3 group-hover:text-white ml-auto"></i>
+        </a>
+
+        <a href="#about" onclick="navigate('about')" class="nav-item group flex items-center gap-4 cursor-pointer bg-white/80 backdrop-blur-sm p-3 skew-container border-l-4 border-dark shadow-lg w-48 ml-2">
+            <span class="unskew font-bold text-lg tracking-widest group-hover:text-white">ABOUT</span>
+            <i class="fa-regular fa-id-card unskew text-dark group-hover:text-white ml-auto"></i>
+        </a>
+    </div>
+</nav>
+
+<!-- Mobile Nav Trigger -->
+<button onclick="toggleMobileNav()" class="md:hidden fixed top-4 right-4 z-50 bg-accent2 text-white p-3 rounded-full shadow-lg">
+    <i class="fa-solid fa-bars"></i>
+</button>
+
+<!-- Mobile Menu Overlay -->
+<div id="mobile-menu" class="fixed inset-0 bg-bg/95 z-40 hidden flex-col items-center justify-center gap-8 md:hidden">
+    <a href="#home" onclick="toggleMobileNav(); navigate('home')" class="text-2xl font-header font-bold text-dark">HOME</a>
+    <a href="#projects" onclick="toggleMobileNav(); navigate('projects')" class="text-2xl font-header font-bold text-dark">GALLERY</a>
+    <a href="#models" onclick="toggleMobileNav(); navigate('models')" class="text-2xl font-header font-bold text-dark">3D VIEW</a>
+    <a href="#about" onclick="toggleMobileNav(); navigate('about')" class="text-2xl font-header font-bold text-dark">ABOUT</a>
+</div>
+
+
+<!-- MAIN CONTENT AREA -->
+<main class="md:ml-72 p-4 md:p-12 min-h-screen z-10 relative transition-all duration-500">
+
+    <!-- SECTION: HOME -->
+    <section id="home" class="page-section min-h-[80vh] flex flex-col justify-center items-start">
+        <div class="absolute top-0 right-0 md:top-10 md:right-20 bg-dark text-white p-4 skew-container shadow-xl border-b-4 border-accent1">
+            <div class="unskew text-center">
+                <div class="text-sm text-accent1 font-bold tracking-widest">CURRENT DATE</div>
+                <div id="date-display" class="text-3xl font-header font-bold"></div>
+                <div class="text-xs text-gray-400">FULL MOON SOON</div>
+            </div>
+        </div>
+
+        <div class="relative mt-12 md:mt-0">
+            <div class="absolute -left-10 -top-10 w-20 h-20 bg-accent2 rounded-full opacity-50 animate-bounce"></div>
+            <h1 class="font-header text-6xl md:text-8xl font-bold text-dark relative z-10 leading-tight">
+                NPR <span class="text-accent2 inline-block transform -skew-x-6 bg-dark px-2 text-white text-5xl md:text-7xl">ARTIST</span><br>
+                <span class="text-accent1">CHARACTER</span> &<br>
+                ENVIRONMENT
+            </h1>
+            <div class="h-2 w-48 bg-gradient-to-r from-accent2 to-accent1 mt-4 rounded-full"></div>
+        </div>
+
+        <p class="mt-8 text-xl text-gray-600 max-w-lg bg-white/60 p-6 rounded-r-xl border-l-4 border-accent2 backdrop-blur-md shadow-sm">
+            Hi, I'm <strong>Emi</strong>. I create 3D worlds that look like 2D anime.
+            Specializing in cel-shading, stylized textures, and immersive environments.
+        </p>
+
+        <div class="mt-10 flex gap-4">
+            <button onclick="navigate('projects')" class="bg-dark text-white px-8 py-3 font-header font-bold tracking-widest hover:bg-accent2 transition-colors clip-corner shadow-lg hover:translate-x-2 transform duration-200">
+                VIEW WORK
+            </button>
+            <button onclick="navigate('models')" class="bg-white text-dark border-2 border-dark px-8 py-3 font-header font-bold tracking-widest hover:bg-accent1 hover:border-accent1 hover:text-white transition-colors clip-corner shadow-lg hover:translate-x-2 transform duration-200">
+                INTERACTIVE
+            </button>
+        </div>
+    </section>
+
+    <!-- SECTION: PROJECTS / GALLERY -->
+    <section id="projects" class="page-section hidden pt-20">
+        <h2 class="font-header text-5xl font-bold text-dark mb-12 flex items-center gap-4">
+            <span class="bg-accent1 w-12 h-12 block transform rotate-45"></span>
+            PROJECTS
+        </h2>
+
+        <!-- Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
+
+            <!-- === PROJECT CARD 1 (LINKED) === -->
+            <!-- 1. I changed the outer <div> to an <a> tag -->
+            <!-- 2. Added href="project_template.html" -->
+            <!-- 3. Added "block" class to make the link behave like a box -->
+            <a href="project_template.html" class="group relative h-80 cursor-pointer perspective-1000 block">
+                <div class="absolute inset-0 bg-dark transform translate-x-2 translate-y-2 transition-transform group-hover:translate-x-4 group-hover:translate-y-4 clip-corner"></div>
+                <div class="relative h-full bg-white border-2 border-dark clip-corner overflow-hidden transition-transform group-hover:-translate-y-1">
+                    <div class="h-2/3 bg-gray-200 relative overflow-hidden">
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-300 group-hover:scale-110 transition-transform duration-500">
+                            <i class="fa-solid fa-image text-4xl text-gray-400"></i>
+                        </div>
+                        <div class="absolute bottom-0 left-0 bg-accent2 text-white px-3 py-1 font-header text-sm font-bold skew-x-[-7deg] ml-[-10px]">
+                            <span class="inline-block skew-x-[7deg]">CHARACTER</span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-header text-2xl font-bold text-dark">Project Aigis</h3>
+                        <p class="text-sm text-gray-500">Anime Style Character Model</p>
+                    </div>
+                    <div class="absolute inset-0 bg-accent2/90 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-center">
+                        <span class="font-header text-3xl font-bold text-white tracking-widest">VIEW</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- === PROJECT CARD 2 (PLACEHOLDER) === -->
+            <!-- When you make 'project_leblanc.html', change <div below to <a href="project_leblanc.html" ...> -->
+            <div class="group relative h-80 cursor-pointer perspective-1000">
+                <div class="absolute inset-0 bg-dark transform translate-x-2 translate-y-2 transition-transform group-hover:translate-x-4 group-hover:translate-y-4 clip-corner"></div>
+                <div class="relative h-full bg-white border-2 border-dark clip-corner overflow-hidden transition-transform group-hover:-translate-y-1">
+                    <div class="h-2/3 bg-gray-200 relative overflow-hidden">
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-accent1 to-white group-hover:scale-110 transition-transform duration-500">
+                            <i class="fa-solid fa-tree text-4xl text-accent1/50"></i>
+                        </div>
+                        <div class="absolute bottom-0 left-0 bg-accent1 text-white px-3 py-1 font-header text-sm font-bold skew-x-[-7deg] ml-[-10px]">
+                            <span class="inline-block skew-x-[7deg]">ENVIRONMENT</span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-header text-2xl font-bold text-dark">Café Leblanc</h3>
+                        <p class="text-sm text-gray-500">NPR Interior Scene</p>
+                    </div>
+                    <div class="absolute inset-0 bg-accent1/90 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-center">
+                        <span class="font-header text-3xl font-bold text-white tracking-widest">VIEW</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- === PROJECT CARD 3 (PLACEHOLDER) === -->
+            <div class="group relative h-80 cursor-pointer perspective-1000">
+                <div class="absolute inset-0 bg-dark transform translate-x-2 translate-y-2 transition-transform group-hover:translate-x-4 group-hover:translate-y-4 clip-corner"></div>
+                <div class="relative h-full bg-white border-2 border-dark clip-corner overflow-hidden transition-transform group-hover:-translate-y-1">
+                    <div class="h-2/3 bg-gray-200 relative overflow-hidden">
+                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-accent3 to-white group-hover:scale-110 transition-transform duration-500">
+                            <i class="fa-solid fa-ghost text-4xl text-accent3/50"></i>
+                        </div>
+                        <div class="absolute bottom-0 left-0 bg-accent3 text-white px-3 py-1 font-header text-sm font-bold skew-x-[-7deg] ml-[-10px]">
+                            <span class="inline-block skew-x-[7deg]">PROP</span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-header text-2xl font-bold text-dark">Fantasy Weapons</h3>
+                        <p class="text-sm text-gray-500">Hand-painted Textures</p>
+                    </div>
+                    <div class="absolute inset-0 bg-accent3/90 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-center">
+                        <span class="font-header text-3xl font-bold text-white tracking-widest">VIEW</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: 3D MODELS (Model Viewer) -->
+    <section id="models" class="page-section hidden pt-20">
+        <h2 class="font-header text-5xl font-bold text-dark mb-4">INTERACTIVE VIEW</h2>
+        <p class="mb-8 text-gray-600">Inspect the topology and shader work in real-time.</p>
+
+        <div class="w-full max-w-4xl mx-auto bg-white p-4 shadow-2xl border-4 border-dark rounded-xl relative">
+            <div class="absolute -top-3 -left-3 w-8 h-8 bg-accent2 border-2 border-dark z-10"></div>
+            <div class="absolute -bottom-3 -right-3 w-8 h-8 bg-accent1 border-2 border-dark z-10"></div>
+
+            <model-viewer
+                    src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+                    ios-src="https://modelviewer.dev/shared-assets/models/Astronaut.usdz"
+                    poster="https://modelviewer.dev/assets/poster-astronaut.png"
+                    alt="A 3D model of an astronaut"
+                    shadow-intensity="1"
+                    camera-controls
+                    auto-rotate
+                    class="w-full h-[500px] bg-gray-100 rounded-lg outline-none"
+                    style="background-color: #FCF9EA;"
+            >
+                <div slot="progress-bar" class="w-full h-full flex items-center justify-center">
+                    <div class="text-accent2 font-bold animate-pulse">LOADING 3D ASSET...</div>
+                </div>
+            </model-viewer>
+
+            <div class="mt-4 flex justify-between items-center border-t-2 border-dashed border-gray-300 pt-4">
+                <div>
+                    <h3 class="font-header text-xl font-bold">Astronaut (Demo)</h3>
+                    <p class="text-sm text-gray-500">Sample GLB integration</p>
+                </div>
+                <button class="bg-dark text-white px-4 py-2 text-sm font-bold hover:bg-accent2 transition-colors">
+                    FULLSCREEN
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: ABOUT -->
+    <section id="about" class="page-section hidden pt-20">
+        <div class="flex flex-col lg:flex-row gap-12 items-center">
+            <div class="w-full lg:w-1/3 relative">
+                <div class="aspect-square bg-white border-4 border-dark shadow-[10px_10px_0px_0px_rgba(45,45,45,1)] overflow-hidden relative group">
+                    <div class="w-full h-full bg-[#BADFDB] flex items-center justify-center overflow-hidden">
+                        <div class="w-32 h-32 bg-[#FFA4A4] rounded-full mix-blend-multiply filter blur-xl absolute top-10 left-10 animate-float"></div>
+                        <div class="w-40 h-40 bg-[#FCF9EA] rounded-full mix-blend-overlay filter blur-xl absolute bottom-10 right-10"></div>
+                        <i class="fa-solid fa-user-astronaut text-8xl text-white drop-shadow-lg z-10"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full lg:w-2/3">
+                <h2 class="font-header text-6xl font-bold text-dark mb-6">
+                    <span class="text-accent2">EMI</span> // PROFILE
+                </h2>
+                <div class="space-y-6 text-lg text-gray-700 font-medium leading-relaxed">
+                    <p class="bg-white/50 p-4 border-l-4 border-accent1">
+                        I am a 3D Artist passionate about bridging the gap between 2D illustration and 3D depth. My workflow involves Blender, Maya, and Substance Painter to create NPR (Non-Photorealistic) assets that feel alive.
+                    </p>
+                    <p>
+                        Inspired by the vibrant UIs of Atlus games and the soft aesthetics of slice-of-life anime, I strive to make work that is both technically proficient and emotionally resonant.
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-4 mt-8">
+                        <div class="bg-dark text-white p-4 clip-shard">
+                            <h4 class="text-accent1 font-bold text-sm tracking-widest mb-1">SOFTWARE</h4>
+                            <ul class="text-sm list-disc list-inside">
+                                <li>Blender</li>
+                                <li>Maya</li>
+                                <li>ZBrush</li>
+                            </ul>
+                        </div>
+                        <div class="bg-dark text-white p-4 clip-shard shadow-[10px_10px_0px_0px_rgba(255,164,164,1)]">
+                            <h4 class="text-accent2 font-bold text-sm tracking-widest mb-1">SKILLS</h4>
+                            <ul class="text-sm list-disc list-inside">
+                                <li>NPR Shading</li>
+                                <li>Character Modeling</li>
+                                <li>Environment Design</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <h3 class="font-header text-2xl font-bold mb-4">CONTACT</h3>
+                        <div class="flex gap-4 text-3xl">
+                            <a href="#" class="text-dark hover:text-accent2 transition-colors transform hover:scale-110"><i class="fa-brands fa-artstation"></i></a>
+                            <a href="#" class="text-dark hover:text-accent1 transition-colors transform hover:scale-110"><i class="fa-brands fa-twitter"></i></a>
+                            <a href="#" class="text-dark hover:text-accent3 transition-colors transform hover:scale-110"><i class="fa-solid fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- UPDATED PATH: We now look inside the 'js' folder -->
+<script src="js/script.js"></script>
+<!-- ADD THIS: Link to the Transition Script -->
+<script src="js/transitions.js"></script>
+</body>
+</html>
