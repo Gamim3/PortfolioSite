@@ -1,8 +1,17 @@
-# Default ignored files
-/shelf/
-/workspace.xml
-# Editor-based HTTP Client requests
-/httpRequests/
-# Datasource local storage ignored files
-/dataSources/
-/dataSources.local.xml
+# --- JetBrains / IntelliJ IDE Files ---
+# Ignore the project directory if it exists
+.idea/
+# Ignore module files
+*.iml
+# Ignore specific IDE configuration XMLs currently in your root
+misc.xml
+modules.xml
+vcs.xml
+workspace.xml
+
+# --- GitHub Copilot / Migration Artifacts ---
+copilot.data.migration*.xml
+
+# --- OS Generated Files (Standard to include) ---
+.DS_Store
+Thumbs.db
