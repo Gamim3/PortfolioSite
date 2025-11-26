@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Detail (3D) | Emi</title>
+
+    <!-- External Libraries -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+    <!-- Model Viewer Component -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.3.0/model-viewer.min.js"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { bg: '#FCF9EA', accent1: '#BADFDB', accent2: '#FFA4A4', accent3: '#FFBDBD', dark: '#2D2D2D' },
+                    fontFamily: { header: ['Oswald', 'sans-serif'], body: ['Kosugi Maru', 'sans-serif'] },
+                    animation: { 'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite' }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body antialiased min-h-screen relative selection:bg-accent2 selection:text-white">
+
+<!-- === TRANSITION OVERLAY === -->
+<div class="transition-overlay">
+    <div class="transition-bar"></div>
+    <div class="transition-bar"></div>
+    <div class="transition-bar"></div>
+</div>
+
+<!-- === LIGHTBOX OVERLAY === -->
+<div id="lightbox" class="fixed inset-0 z-50 bg-dark/95 backdrop-blur-sm flex items-center justify-center cursor-zoom-out" onclick="closeLightbox()">
+    <div class="absolute top-4 right-4 text-white text-4xl cursor-pointer hover:text-accent2 transition-colors"><i class="fa-solid fa-xmark"></i></div>
+    <img id="lightbox-img" src="" alt="Fullscreen View" class="border-4 border-white" onclick="event.stopPropagation()">
+</div>
+
+<!-- === BACKGROUND === -->
+<div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="absolute inset-0 bg-accent1/10"></div>
+    <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-5 mix-blend-multiply">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-video-of-a-man-with-heads-like-statues-32663-large.mp4" type="video/mp4">
+    </video>
+    <div class="absolute top-20 right-0 w-96 h-96 bg-accent2/10 rounded-full blur-3xl animate-pulse-slow"></div>
+</div>
+
+<!-- === NAVIGATION === -->
+<nav class="sticky top-0 z-40 w-full p-6 pointer-events-none">
+    <div class="flex justify-between items-start">
+        <a href="index.html#projects" class="pointer-events-auto group inline-flex items-center gap-3 bg-white border-2 border-dark px-6 py-2 skew-container shadow-lg hover:bg-dark hover:text-white transition-all duration-300 hover:-translate-y-1">
+            <i class="fa-solid fa-arrow-left unskew text-xl"></i>
+            <span class="font-header font-bold text-xl tracking-widest unskew">RETURN</span>
+        </a>
+        <div class="hidden md:block pointer-events-auto bg-dark text-white px-4 py-2 skew-container border-b-4 border-accent2 shadow-lg">
+            <span class="block unskew font-header font-bold tracking-widest">PROJECT ARCHIVE (3D)</span>
+        </div>
+    </div>
+</nav>
+
+<!-- === MAIN CONTENT === -->
+<main class="relative z-10 max-w-7xl mx-auto px-4 pb-20 pt-4">
+
+    <header class="mb-12 pl-4 border-l-8 border-accent2">
+        <h1 class="font-header text-6xl md:text-8xl font-bold text-dark leading-none mb-2">PROJECT <span class="text-accent2">ASTRO</span></h1>
+        <p class="text-xl text-gray-600 font-bold tracking-widest uppercase">Interactive Model // Real-time Render</p>
+    </header>
+
+    <div class="flex flex-col lg:flex-row gap-12">
+
+        <!-- LEFT COLUMN: VISUAL FEED -->
+        <div class="w-full lg:w-2/3 space-y-8">
+
+            <!-- === 3D VIEWER HERO === -->
+            <!-- This replaces the static image hero from the other template -->
+            <div class="bg-white border-4 border-dark shadow-[10px_10px_0px_0px_rgba(45,45,45,1)] p-2 relative">
+                <!-- Decorative elements -->
+                <div class="absolute -top-2 -left-2 w-6 h-6 bg-accent2 border-2 border-dark z-10"></div>
+                <div class="absolute -bottom-2 -right-2 w-6 h-6 bg-accent1 border-2 border-dark z-10"></div>
+
+                <!-- The Viewer -->
+                <!-- Update 'src' to point to your .glb file in assets/models/ -->
+                <model-viewer
+                        src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+                        ios-src="https://modelviewer.dev/shared-assets/models/Astronaut.usdz"
+                        poster="https://modelviewer.dev/assets/poster-astronaut.png"
+                        alt="A 3D model of an astronaut"
+                        shadow-intensity="1"
+                        camera-controls
+                        auto-rotate
+                        class="w-full h-[500px] bg-gray-100 outline-none cursor-grab active:cursor-grabbing"
+                        style="background-color: #FCF9EA;"
+                >
+                    <div slot="progress-bar" class="w-full h-full flex items-center justify-center">
+                        <div class="text-accent2 font-bold animate-pulse">LOADING MODEL...</div>
+                    </div>
+                    <!-- Custom AR Button -->
+                    <button slot="ar-button" class="absolute bottom-4 right-4 bg-dark text-white px-4 py-2 font-header font-bold text-sm hover:bg-accent2 transition-colors border-2 border-white shadow-lg">
+                        VIEW IN AR
+                    </button>
+                </model-viewer>
+
+                <div class="bg-dark text-white p-3 flex justify-between items-center mt-2 skew-container ml-2 mr-2 mb-[-10px]">
+                    <span class="unskew text-sm font-bold tracking-widest">INTERACTIVE VIEW</span>
+                    <span class="unskew text-xs text-gray-400"><i class="fa-solid fa-mouse"></i> DRAG TO ROTATE</span>
+                </div>
+            </div>
+
+            <!-- Text Description -->
+            <div class="bg-white/80 p-8 border-l-4 border-accent1 shadow-lg backdrop-blur-sm">
+                <h3 class="font-header text-3xl font-bold mb-4 text-dark">TECHNICAL BREAKDOWN</h3>
+                <p class="text-lg text-gray-700 leading-relaxed mb-4">
+                    This model focuses on optimizing topology for deformation. The interactive view above demonstrates the real-time shader response.
+                </p>
+                <p class="text-lg text-gray-700 leading-relaxed">
+                    Try rotating the model to see how the rim-light shader interacts with the camera angle, a key feature of the NPR style used in this project.
+                </p>
+            </div>
+
+            <!-- Supporting Images Grid -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="cursor-zoom-in border-2 border-dark hover:border-accent2 transition-colors" onclick="openLightbox(this)">
+                    <img src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1000&auto=format&fit=crop" alt="Wireframe Topology" class="w-full h-full object-cover">
+                </div>
+                <div class="cursor-zoom-in border-2 border-dark hover:border-accent2 transition-colors" onclick="openLightbox(this)">
+                    <img src="https://images.unsplash.com/photo-1633163553620-28e27b2894b3?q=80&w=1000&auto=format&fit=crop" alt="Texture Maps" class="w-full h-full object-cover">
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: SPECS -->
+        <div class="w-full lg:w-1/3 relative">
+            <div class="sticky top-24 space-y-8">
+
+                <!-- Stats Card -->
+                <div class="bg-white border-4 border-dark shadow-[15px_15px_0px_0px_#2D2D2D] p-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-16 h-16 bg-accent2 clip-shard"></div>
+
+                    <h3 class="font-header text-2xl font-bold mb-6 border-b-2 border-gray-200 pb-2">
+                        <i class="fa-solid fa-microchip text-accent2 mr-2"></i> MODEL DATA
+                    </h3>
+
+                    <div class="space-y-6 font-header">
+                        <div>
+                            <div class="flex justify-between text-sm text-gray-500 mb-1"><span>TRIANGLES</span><span class="font-bold text-dark">15,200</span></div>
+                            <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden"><div class="bg-accent2 h-full stat-fill" style="width: 45%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm text-gray-500 mb-1"><span>VERTICES</span><span class="font-bold text-dark">8,100</span></div>
+                            <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden"><div class="bg-accent1 h-full stat-fill" style="width: 30%"></div></div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm text-gray-500 mb-1"><span>MATERIALS</span><span class="font-bold text-dark">1 (Atlas)</span></div>
+                            <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden"><div class="bg-accent3 h-full stat-fill" style="width: 100%"></div></div>
+                        </div>
+                    </div>
+
+                    <h4 class="font-header text-sm font-bold text-gray-400 mt-8 mb-3 tracking-widest">TOOLS DEPLOYED</h4>
+                    <div class="flex gap-3">
+                        <div class="bg-dark text-white w-10 h-10 flex items-center justify-center font-bold rounded hover:bg-accent2 transition-colors cursor-help" title="Blender">B</div>
+                        <div class="bg-dark text-white w-10 h-10 flex items-center justify-center font-bold rounded hover:bg-accent1 transition-colors cursor-help" title="Substance Painter">Sp</div>
+                    </div>
+                </div>
+
+                <a href="#" class="group block bg-dark text-white text-center py-4 font-header font-bold text-xl tracking-widest hover:bg-accent2 transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 clip-shard relative overflow-hidden">
+                    <span class="relative z-10">DOWNLOAD .GLB</span>
+                    <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 skew-y-12"></div>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- Scripts -->
+<script src="js/project_detail.js"></script>
+<script src="js/transitions.js"></script>
+</body>
+</html>
